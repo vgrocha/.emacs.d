@@ -26,7 +26,8 @@
 ;;                       clojure-mode clojure-test-mode 
 ;;                       rainbow-delimiters 
 ;;                       ac-slime 
-;;                       markdown-mode))
+;;                       markdown-mode
+;;                       undo-tree))
 
 ;; (dolist (p my-packages)
 ;;  (when (not (package-installed-p p))
@@ -62,6 +63,22 @@
 (global-set-key (kbd "C-x <right>") 'windmove-right) ; move to right window
 (global-set-key (kbd "C-x <up>")    'windmove-up)     ; move to upper window
 (global-set-key (kbd "C-x <down>")  'windmove-down)    ; move to downer window
+
+;###################################
+;;Modes
+;###################################
+; FIACRE
+;;;(autoload <function called> <filename> <doc> <interactive>)
+;; (add-to-list 'load-path (expand-file-name "~/elisp/modes/fiacre"))
+;; (autoload 'fiacre-mode "fiacre" "Fiacre Mode." t)
+(load-file (concat *my-default-lib* "/modes/fiacre.el"))
+;;;##autoload
+(add-to-list 'auto-mode-alist '("\\.fcr$" . fiacre-mode))
+
+;AMPL
+(load-file (concat *my-default-lib* "/modes/ampl-mode.el"))
+;;;##autoload
+(add-to-list 'auto-mode-alist '("\\(.mod\\|.dat\\|.ampl\\)'" . ampl-mode))
 
 
 ;###################################
@@ -117,12 +134,19 @@
 ;; comment and uncomment region
 (global-set-key (kbd "C-;") 'comment-or-uncomment-region)
 
+;;bind goto line to M G
+(global-set-key "\M-g" 'goto-line)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  Maps swaps [ for ( and vice versa                   ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(keyboard-translate ?\( ?\[)
-(keyboard-translate ?\[ ?\()
-(keyboard-translate ?\) ?\])
-(keyboard-translate ?\] ?\))
+;; (keyboard-translate ?\( ?\[)
+;; (keyboard-translate ?\[ ?\()
+;; (keyboard-translate ?\) ?\])
+;; (keyboard-translate ?\] ?\))
 
+;; Highlight search object
+(setq search-highlight           t)
 
+;; Highlight query object
+(setq query-replace-highlight    t)
