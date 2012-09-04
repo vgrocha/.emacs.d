@@ -26,20 +26,26 @@
 ;;                       clojure-mode clojure-test-mode 
 ;;                       rainbow-delimiters 
 ;;                       ac-slime 
-;;                       markdown-mode))
+;;                       markdown-mode
+;;                       auto-complete))
 
 ;; (dolist (p my-packages)
 ;;  (when (not (package-installed-p p))
 ;;    (package-install p)))
 
+(add-hook 'slime-repl-mode-hook (lambda () (paredit-mode +1)))
 
+(defun override-slime-repl-bindings-with-paredit ()
+            (define-key slime-repl-mode-map
+                (read-kbd-macro paredit-backward-delete-key) nil))
+          (add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)
 
 ;#####################################################
 ;; Styling. Check if not in terminal to set the nice colors and fonts
 ;#####################################################
 (unless (string= 'nil window-system)
   (progn
-    (set-face-font 'default "Inconsolata 12")
+    (set-face-font 'default "Inconsolata 10")
     (require 'color-theme)
     (color-theme-initialize)
     (load-file (concat *my-default-lib* "/color-theme-twilight.el"))
@@ -62,6 +68,73 @@
 (global-set-key (kbd "C-x <right>") 'windmove-right) ; move to right window
 (global-set-key (kbd "C-x <up>")    'windmove-up)     ; move to upper window
 (global-set-key (kbd "C-x <down>")  'windmove-down)    ; move to downer window
+(global-set-key (kbd "M-g") 'goto-line)
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; autocomplete
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(add-to-list 'load-path (concat *my-default-lib* "/elpa/auto-complete-1.4"))
+
+(require 'auto-complete-config)
+(add-to-list 'ac-dictionary-directories (concat *my-default-lib* "/elpa/auto-complete-1.4/ac-dict"))
+(ac-config-default)
+
+(define-globalized-minor-mode real-global-auto-complete-mode
+  auto-complete-mode (lambda ()
+                       (if (not (or (minibufferp (current-buffer))
+                                    (not (numberp
+                                          (compare-strings "*eshell*" 0 7
+                                                           (buffer-name
+                                                            (current-buffer)) 0 7)))))
+                         (auto-complete-mode 1))))
+
+;; tab in insert mode calls autocomplete
+(ac-set-trigger-key "TAB")
+
+(real-global-auto-complete-mode 1)
+
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; slime configuration
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+;; https://jandmworks.com/lisp.html#SBCL quirks
+(add-to-list 'load-path (concat *my-default-lib* "/slime"))
+(autoload 'slime-mode "slime" nil)
+
+(eval-after-load "slime"
+  '(progn
+;     (slime-setup '(slime-repl))
+     (setq inferior-lisp-program "sbcl")
+     (set-language-environment "UTF-8")
+     (setq slime-net-coding-system 'utf-8-unix)
+     (setq common-lisp-hyperspec-root "file:/usr/share/doc/hyperspec/")
+     (global-set-key (kbd "C-c s") 'slime-selector)
+     ;; autocomplete with slime's documentation
+     (add-to-list 'load-path (concat *my-default-lib* "/elpa/ac-slime"))
+
+     (require 'ac-slime)
+     (add-hook 'slime-mode-hook 'set-up-slime-ac)
+     (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)))
+
+
+(dolist (hook '(lisp-mode-hook
+                clojure-mode-hook))
+  (add-hook hook (lambda () (slime-mode t))))
+
+(add-hook 'inferior-lisp-mode-hook (lambda () (inferior-slime-mode t)))
+
+
+(defun scratch-lisp-file ()
+  "Insert a template (with DEFPACKAGE and IN-PACKAGE forms) into
+   the current buffer."
+  (interactive)
+  (goto-char 0)
+  (let* ((file (file-name-nondirectory (buffer-file-name)))
+         (package (file-name-sans-extension file)))
+    (insert ";;;; " file "\n")
+    (insert "\n(defpackage :" package "\n  (:use :cl))\n\n")
+    (insert "(in-package :" package ")\n\n")))
+
 
 
 ;###################################
@@ -120,9 +193,11 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  Maps swaps [ for ( and vice versa                   ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(keyboard-translate ?\( ?\[)
-(keyboard-translate ?\[ ?\()
-(keyboard-translate ?\) ?\])
-(keyboard-translate ?\] ?\))
+;; (keyboard-translate ?\( ?\[)
+;; (keyboard-translate ?\[ ?\()
+;; (keyboard-translate ?\) ?\])
+;; (keyboard-translate ?\] ?\))
 
 
+(put 'upcase-region 'disabled nil)
+(put 'downcase-region 'disabled nil)
