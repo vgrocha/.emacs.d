@@ -27,7 +27,9 @@
 ;;                       rainbow-delimiters 
 ;;                       ac-slime 
 ;;                       markdown-mode
-;;                       auto-complete))
+;;                       auto-complete
+;;                       undo-tree))
+
 
 ;; (dolist (p my-packages)
 ;;  (when (not (package-installed-p p))
@@ -136,6 +138,22 @@
     (insert "(in-package :" package ")\n\n")))
 
 
+;###################################
+;;Modes
+;###################################
+; FIACRE
+;;;(autoload <function called> <filename> <doc> <interactive>)
+;; (add-to-list 'load-path (expand-file-name "~/elisp/modes/fiacre"))
+;; (autoload 'fiacre-mode "fiacre" "Fiacre Mode." t)
+(load-file (concat *my-default-lib* "/modes/fiacre.el"))
+;;;##autoload
+(add-to-list 'auto-mode-alist '("\\.fcr$" . fiacre-mode))
+
+;AMPL
+(load-file (concat *my-default-lib* "/modes/ampl-mode.el"))
+;;;##autoload
+(add-to-list 'auto-mode-alist '("\\(.mod\\|.dat\\|.ampl\\)'" . ampl-mode))
+
 
 ;###################################
 ;Some small configurations
@@ -190,6 +208,9 @@
 ;; comment and uncomment region
 (global-set-key (kbd "C-;") 'comment-or-uncomment-region)
 
+;;bind goto line to M G
+(global-set-key "\M-g" 'goto-line)
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  Maps swaps [ for ( and vice versa                   ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -198,6 +219,10 @@
 ;; (keyboard-translate ?\) ?\])
 ;; (keyboard-translate ?\] ?\))
 
+;; Highlight search object
+(setq search-highlight           t)
 
 (put 'upcase-region 'disabled nil)
 (put 'downcase-region 'disabled nil)
+;; Highlight query object
+(setq query-replace-highlight    t)
