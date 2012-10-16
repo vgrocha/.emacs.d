@@ -3,10 +3,9 @@
 (defvar *my-default-lib* "~/.emacs.d")
 (add-to-list 'load-path *my-default-lib*)
 
-
 (require 'cl)
 
-
+(setq tab-width 3)
 
 ;###################################
 ;### Package manager - marmalade ###
@@ -22,18 +21,18 @@
 (package-initialize)
 
 ;basic packages for clojure =)
-;; (defvar my-packages '(starter-kit starter-kit-lisp starter-kit-bindings 
-;;                       clojure-mode clojure-test-mode 
-;;                       rainbow-delimiters 
-;;                       ac-slime 
-;;                       markdown-mode
-;;                       auto-complete
-;;                       undo-tree))
+ ;; (defvar my-packages '(starter-kit starter-kit-lisp starter-kit-bindings 
+ ;;                       clojure-mode clojure-test-mode 
+ ;;                       rainbow-delimiters 
+ ;;                       ac-slime 
+ ;;                       markdown-mode
+ ;;                       auto-complete
+ ;;                       undo-tree))
 
 
-;; (dolist (p my-packages)
-;;  (when (not (package-installed-p p))
-;;    (package-install p)))
+ ;; (dolist (p my-packages)
+ ;;  (when (not (package-installed-p p))
+ ;;    (package-install p)))
 
 (add-hook 'slime-repl-mode-hook (lambda () (paredit-mode +1)))
 
@@ -47,7 +46,7 @@
 ;#####################################################
 (unless (string= 'nil window-system)
   (progn
-    (set-face-font 'default "Inconsolata 10")
+    (set-face-font 'default "Inconsolata 13")
     (require 'color-theme)
     (color-theme-initialize)
     (load-file (concat *my-default-lib* "/color-theme-twilight.el"))
