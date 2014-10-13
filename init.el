@@ -234,3 +234,6 @@
 (add-hook 'html-mode-hook 'my-html-mode-hook)
 
 
+;;haskell identation
+(custom-set-variables
+     '(haskell-mode-hook '(turn-on-haskell-indentation)))
