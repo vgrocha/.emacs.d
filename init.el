@@ -225,3 +225,12 @@
 (put 'downcase-region 'disabled nil)
 ;; Highlight query object
 (setq query-replace-highlight    t)
+
+
+;;disable word wrapping in html mode
+(defun my-html-mode-hook ()
+  (auto-fill-mode -1))
+
+(add-hook 'html-mode-hook 'my-html-mode-hook)
+
+
