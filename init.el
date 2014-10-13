@@ -21,18 +21,19 @@
 (package-initialize)
 
 ;basic packages for clojure =)
- ;; (defvar my-packages '(starter-kit starter-kit-lisp starter-kit-bindings 
- ;;                       clojure-mode clojure-test-mode 
- ;;                       rainbow-delimiters 
- ;;                       ac-slime 
- ;;                       markdown-mode
- ;;                       auto-complete
- ;;                       undo-tree))
+ (defvar my-packages '(starter-kit starter-kit-lisp starter-kit-bindings 
+                       clojure-mode clojure-test-mode 
+                       rainbow-delimiters
+                       nrepl
+                       ac-slime 
+                       markdown-mode
+                       auto-complete
+                       undo-tree))
 
 
- ;; (dolist (p my-packages)
- ;;  (when (not (package-installed-p p))
- ;;    (package-install p)))
+ (dolist (p my-packages)
+  (when (not (package-installed-p p))
+    (package-install p)))
 
 (add-hook 'slime-repl-mode-hook (lambda () (paredit-mode +1)))
 
