@@ -1,7 +1,7 @@
 (defvar *emacs-load-start* (current-time))
 
 (defvar *my-default-lib* "~/.emacs.d")
-(add-to-list 'load-path *my-default-lib*)
+(add-to-list 'load-path (concat *my-default-lib* "/theme-twilight"))
 
 (require 'cl)
 
@@ -10,47 +10,76 @@
 ;###################################
 ;### Package manager - marmalade ###
 ;###################################
-(require 'package)
-(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
+;;(require 'package)
+;;(add-to-list 'package-archives '("marmalade" . "http://marmalade-repo.org/packages/"))
 
-;refreshing contents
-(when (not package-archive-contents)
- (package-refresh-contents))
+
+
 
 ;initializing packages!
 (package-initialize)
 
+(setq package-archives '(("gnu" . "http://elpa.gnu.org/packages/")
+                         ("marmalade" . "http://marmalade-repo.org/packages/")
+                         ("melpa"
+                         . "http://melpa.milkbox.net/packages/")))
+
+;refreshing contents
+(when (not package-archive-contents)
+  (package-refresh-contents))
+
 ;basic packages for clojure =)
- (defvar my-packages '(starter-kit starter-kit-lisp starter-kit-bindings 
-                       clojure-mode clojure-test-mode 
-                       rainbow-delimiters
-                       nrepl
-                       ac-slime 
-                       markdown-mode
-                       auto-complete
-                       undo-tree))
+;; (defvar my-packages '(starter-kit starter-kit-lisp starter-kit-bindings 
+ ;;                       clojure-mode clojure-test-mode 
+ ;;                       rainbow-delimiters
+ ;;                       ;; nrepl
+ ;;                       ;; ac-nrepl
+ ;;                       ;; ac-slime
+ ;;                       cider
+ ;;                       ac-cider-compliment
+ ;;                       markdown-mode
+ ;;                       auto-complete
+ ;;                       undo-tree))
+
+
+ (defvar my-packages '(starter-kit starter-kit-lisp starter-kit-bindings
+                      clojure-mode
+		      cider
+                      ;;cider-test
+		      auto-complete
+		      ac-cider-compliment
+		      markdown-mode
+		      paredit
+		      undo-tree))
 
 
  (dolist (p my-packages)
-  (when (not (package-installed-p p))
-    (package-install p)))
+   (when (not (package-installed-p p))
+     (package-install p)))
 
-(add-hook 'slime-repl-mode-hook (lambda () (paredit-mode +1)))
 
-(defun override-slime-repl-bindings-with-paredit ()
-            (define-key slime-repl-mode-map
-                (read-kbd-macro paredit-backward-delete-key) nil))
-          (add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)
+;;cider confs
+(add-hook 'cider-repl-mode-hook (lambda () (paredit-mode +1)))
+
+;;slimes confs
+
+;;(add-hook 'slime-repl-mode-hook (lambda () (paredit-mode +1)))
+
+
+;; (defun override-slime-repl-bindings-with-paredit ()
+;;             (define-key slime-repl-mode-map
+;;                 (read-kbd-macro paredit-backward-delete-key) nil))
+;;           (add-hook 'slime-repl-mode-hook 'override-slime-repl-bindings-with-paredit)
 
 ;#####################################################
 ;; Styling. Check if not in terminal to set the nice colors and fonts
 ;#####################################################
 (unless (string= 'nil window-system)
   (progn
-    (set-face-font 'default "Inconsolata 10")
+    (set-face-font 'default "Inconsolata 12")
     (require 'color-theme)
     (color-theme-initialize)
-    (load-file (concat *my-default-lib* "/color-theme-twilight.el"))
+    (load-file (concat *my-default-lib* "/theme-twilight/color-theme-twilight.el"))
     (load-file (concat *my-default-lib* "/zenburn-el/zenburn.el"))
     ;; ;; theme for darker enviroments
 
@@ -95,35 +124,35 @@
 (real-global-auto-complete-mode 1)
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;; slime configuration
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;; ;; slime configuration
+;; ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-;; https://jandmworks.com/lisp.html#SBCL quirks
-(add-to-list 'load-path (concat *my-default-lib* "/slime"))
-(autoload 'slime-mode "slime" nil)
+;; ;; https://jandmworks.com/lisp.html#SBCL quirks
+;; (add-to-list 'load-path (concat *my-default-lib* "/slime"))
+;; (autoload 'slime-mode "slime" nil)
 
-(eval-after-load "slime"
-  '(progn
-;     (slime-setup '(slime-repl))
-     (setq inferior-lisp-program "sbcl")
-     (set-language-environment "UTF-8")
-     (setq slime-net-coding-system 'utf-8-unix)
-     (setq common-lisp-hyperspec-root "file:/usr/share/doc/hyperspec/")
-     (global-set-key (kbd "C-c s") 'slime-selector)
-     ;; autocomplete with slime's documentation
-     (add-to-list 'load-path (concat *my-default-lib* "/elpa/ac-slime"))
+;; (eval-after-load "slime"
+;;   '(progn
+;; ;     (slime-setup '(slime-repl))
+;;      (setq inferior-lisp-program "sbcl")
+;;      (set-language-environment "UTF-8")
+;;      (setq slime-net-coding-system 'utf-8-unix)
+;;      (setq common-lisp-hyperspec-root "file:/usr/share/doc/hyperspec/")
+;;      (global-set-key (kbd "C-c s") 'slime-selector)
+;;      ;; autocomplete with slime's documentation
+;;      (add-to-list 'load-path (concat *my-default-lib* "/elpa/ac-slime"))
 
-     (require 'ac-slime)
-     (add-hook 'slime-mode-hook 'set-up-slime-ac)
-     (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)))
+;;      (require 'ac-slime)
+;;      (add-hook 'slime-mode-hook 'set-up-slime-ac)
+;;      (add-hook 'slime-repl-mode-hook 'set-up-slime-ac)))
 
 
-(dolist (hook '(lisp-mode-hook
-                clojure-mode-hook))
-  (add-hook hook (lambda () (slime-mode t))))
+;; (dolist (hook '(lisp-mode-hook
+;;                 clojure-mode-hook))
+;;   (add-hook hook (lambda () (slime-mode t))))
 
-(add-hook 'inferior-lisp-mode-hook (lambda () (inferior-slime-mode t)))
+;; (add-hook 'inferior-lisp-mode-hook (lambda () (inferior-slime-mode t)))
 
 
 (defun scratch-lisp-file ()
@@ -238,3 +267,21 @@
 ;;haskell identation
 (custom-set-variables
      '(haskell-mode-hook '(turn-on-haskell-indentation)))
+
+(eval-after-load 'haskell-mode
+  '(define-key haskell-mode-map [f8] 'haskell-navigate-imports))
+
+(let ((my-cabal-path (expand-file-name "~/.cabal/bin")))
+  (setenv "PATH" (concat my-cabal-path ":" (getenv "PATH")))
+  (add-to-list 'exec-path my-cabal-path))
+(custom-set-variables '(haskell-tags-on-save t))
+
+;;multi-web-mode
+(require 'multi-web-mode)
+(setq mweb-default-major-mode 'html-mode)
+(setq mweb-tags 
+  '((php-mode "<\\?php\\|<\\? \\|<\\?=" "\\?>")
+    (js-mode  "<script +\\(type=\"text/javascript\"\\|language=\"javascript\"\\)[^>]*>" "</script>")
+    (css-mode "<style +type=\"text/css\"[^>]*>" "</style>")))
+(setq mweb-filename-extensions '("php" "htm" "html" "ctp" "phtml" "php4" "php5"))
+(multi-web-global-mode 1)
