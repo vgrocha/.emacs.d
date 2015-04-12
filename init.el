@@ -243,10 +243,10 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;  Maps swaps [ for ( and vice versa                   ;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-(keyboard-translate ?\( ?\[)
-(keyboard-translate ?\[ ?\()
-(keyboard-translate ?\) ?\])
-(keyboard-translate ?\] ?\))
+;; (keyboard-translate ?\( ?\[)
+;; (keyboard-translate ?\[ ?\()
+;; (keyboard-translate ?\) ?\])
+;; (keyboard-translate ?\] ?\))
 
 ;; Highlight search object
 (setq search-highlight           t)
