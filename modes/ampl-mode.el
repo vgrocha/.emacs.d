@@ -198,8 +198,14 @@
 	    (while not-indented
 	      (forward-line -1)
               (beginning-of-line)
-	      ;; If the preceding line ends with a semicolon, indent same
-	      (if (looking-at ".*;[ \t]*$")
+              ;;If a keyword precedes, indent more
+	      (if (looking-at "^[ \t]*\\(data\\|let\\|m\\(?:aximize\\|inimize\\|odel\\)\\|param\\|s\\(?:et\\|olve\\|ubject to\\)\\|var\\)")
+		    (progn
+		      (setq cur-indent (+ (current-indentation) tab-width))
+		      (setq not-indented nil))
+
+                ;; If the preceding line ends with a semicolon, indent less
+		(if (looking-at ".*;")
 		  (progn
 ;		    (setq cur-indent (- (current-indentation) tab-width))
                     (setq cur-indent (current-indentation))
@@ -207,13 +213,7 @@
 		    ;; (if (< cur-indent 0)
 		    ;;     (setq cur-indent 0))
 		    (setq not-indented nil))
-
-		;If a keyword precedes, indent more
-		(if (or (looking-at "^[ \t]*\\(data\\|let\\|m\\(?:aximize\\|inimize\\|odel\\)\\|p\\(?:aram\\|roblem\\)\\|s\\(?:et\\|olve\\|ubject to\\)\\|var\\)")
                         (looking-at ".*{[ \t]*$"))
-		    (progn
-		      (setq cur-indent (+ (current-indentation) tab-width))
-		      (setq not-indented nil))
 		  (if (bobp)
 		      (setq not-indented nil))
                   )
